@@ -42,6 +42,7 @@
 
 # Adapted by Remi Pautrat, Philipp Lindenberger
 
+from pathlib import Path
 import torch
 from kornia.color import rgb_to_grayscale
 from torch import nn
@@ -141,8 +142,14 @@ class SuperPoint(Extractor):
             c5, self.conf.descriptor_dim, kernel_size=1, stride=1, padding=0
         )
 
-        url = "https://github.com/cvg/LightGlue/releases/download/v0.1_arxiv/superpoint_v1.pth"  # noqa
-        self.load_state_dict(torch.hub.load_state_dict_from_url(url))
+        default_weights_path = Path(__file__).parent / "weights" / "superpoint_v1.pth"
+        if default_weights_path.exists():
+            print(f"Loading superpoint weights from {str(default_weights_path)}")
+            self.load_state_dict(torch.load(str(default_weights_path), map_location="cpu"))
+        else:
+            url = "https://github.com/cvg/LightGlue/releases/download/v0.1_arxiv/superpoint_v1.pth"
+            print(f"Loading superpoint weights from {url}")
+            self.load_state_dict(torch.hub.load_state_dict_from_url(url))
 
         if self.conf.max_num_keypoints is not None and self.conf.max_num_keypoints <= 0:
             raise ValueError("max_num_keypoints must be positive or None")

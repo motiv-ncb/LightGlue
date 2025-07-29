@@ -23,6 +23,9 @@ dev = ["black==23.12.1", "flake8", "isort"]
 [tool.setuptools]
 packages = ["lightglue"]
 
+[tool.setuptools.package-data]
+"lightglue" = ["weights/*.pth"]
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
